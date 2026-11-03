@@ -1,8 +1,9 @@
-
+import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/get-current-user";
+import { AuthLoading } from "../auth/login/components/auth-loading";
 
-export default async function ProtectedLayout({
+async function ProtectedContent({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -14,4 +15,16 @@ export default async function ProtectedLayout({
   }
 
   return children;
+}
+
+export default function ProtectedLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <Suspense fallback={<AuthLoading />}>
+      <ProtectedContent>{children}</ProtectedContent>
+    </Suspense>
+  );
 }
