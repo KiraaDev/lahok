@@ -1,5 +1,5 @@
 
-import { redirect } from "next/navigation";
+import { redirect, unauthorized } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/get-current-user";
 
 export default async function StaffLayout({
@@ -14,7 +14,7 @@ export default async function StaffLayout({
   }
 
   if (currentUser.role !== "staff") {
-    redirect("/unauthorized");
+    unauthorized()
   }
 
   return children;
