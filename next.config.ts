@@ -4,7 +4,8 @@ const nextConfig: NextConfig = {
   /* config options here */
   experimental: {
     agentFeedback: true,
-    authInterrupts: true
+    authInterrupts: true,
+    serverActions: { bodySizeLimit: "3mb" },
   },
   cacheComponents: true,
   partialPrefetching: true,

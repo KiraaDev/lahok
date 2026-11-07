@@ -23,6 +23,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     "--primary": s.primary_color,
     "--primary-foreground": getContrastColor(s.primary_color),
     "--ring": s.primary_color,
+    "--sidebar-primary": s.primary_color,
+    "--sidebar-primary-foreground": getContrastColor(s.primary_color),
   } as CSSProperties;
 
   return (

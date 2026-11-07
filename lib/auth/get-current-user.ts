@@ -1,10 +1,10 @@
-
 import "server-only";
 
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { CurrentUser } from "@/types/profile";
 
-export async function getCurrentUser(): Promise<CurrentUser | null> {
+export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   const supabase = await createClient();
 
   const {
@@ -26,4 +26,4 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     ...profile,
     authUser: user,
   };
-}
+});

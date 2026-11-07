@@ -14,19 +14,22 @@ export function getDashboardPath(role: UserRole) {
 
 export async function requireUser(role?: "admin") {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("role")
+    .select("role, full_name, email")
     .eq("id", user.id)
     .single();
   if (!profile) redirect("/login");
   if (role === "admin" && profile.role !== "admin") redirect("/dashboard");
 
-  return { user, role: profile.role };
+  return {
+    user,
+    role: profile.role as UserRole,
+    fullName: profile.full_name as string | null,
+    email: (profile.email ?? user.email ?? "") as string,
+  };
 }
 

@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { loginSchema, type LoginValues } from "@/lib/validations/auth";
-import { login } from "../actions";
+import { login } from "@/app/auth/login/actions";
 
 export function LoginForm() {
   const [isPending, startTransition] = useTransition();
@@ -29,7 +29,6 @@ export function LoginForm() {
     setServerError(null);
     startTransition(async () => {
       const result = await login(values);
-      // On success the action redirects, so we only get here on failure
       if (result?.error) setServerError(result.error);
     });
   }

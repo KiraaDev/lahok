@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import LoginContent from "./components/login-content";
+import LoginContent from "@/components/auth/login-content";
 
 export const metadata = { title: "Log in" };
 
