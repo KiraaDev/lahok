@@ -14,7 +14,7 @@ type Props = {
   role: string;
 };
 
-export function AppHeader({ titles, section, ...user }: Props) {
+export function AppHeader({ titles, ...user }: Props) {
   const pathname = usePathname();
 
   const title =
@@ -30,12 +30,6 @@ export function AppHeader({ titles, section, ...user }: Props) {
       <Separator orientation="vertical" className="h-5" />
 
       <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-2 text-sm">
-        {section && (
-          <>
-            <span className="hidden text-muted-foreground sm:inline">{section}</span>
-            <span className="hidden text-muted-foreground/40 sm:inline">/</span>
-          </>
-        )}
         <h1 className="truncate font-semibold tracking-tight">{title}</h1>
       </nav>
 
