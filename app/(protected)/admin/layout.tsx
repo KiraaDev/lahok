@@ -11,6 +11,7 @@ import { AppHeader } from "@/components/layout/app-header";
 
 const ADMIN_TITLES = {
   "/admin/dashboard": "Dashboard",
+  "/admin/events": "Events",
   "/admin/settings": "Settings",
 };
 

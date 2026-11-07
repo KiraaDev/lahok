@@ -1,11 +1,13 @@
 "use client";
 
-import { LayoutDashboard, Settings } from "lucide-react";
+import { CalendarDays, LayoutDashboard, Settings } from "lucide-react";
 import { NavSidebar, type NavItem } from "./nav-sidebar";
 
 const ADMIN_NAV: NavItem[] = [
   { title: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
+    { title: "Events", href: "/admin/events", icon: CalendarDays },
   { title: "Settings", href: "/admin/settings", icon: Settings },
+  
 ];
 
 type Props = { barangayName: string; logoUrl: string | null };
