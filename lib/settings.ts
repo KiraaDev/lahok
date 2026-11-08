@@ -3,10 +3,11 @@ import "server-only";
 import type { BarangaySettings } from "@/types/settings";
 import { cacheLife, cacheTag } from "next/cache";
 import { createPublicClient } from "./supabase/public";
+import { DEFAULT_BARANGAY_NAME } from "./branding";
 
 const DEFAULTS: BarangaySettings = {
   id: 1,
-  barangay_name: "Your Barangay",
+  barangay_name: DEFAULT_BARANGAY_NAME,
   municipality_city: null,
   province: null,
   logo_url: null,

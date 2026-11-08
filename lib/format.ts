@@ -1,3 +1,4 @@
+import { dateKey } from "@/lib/calendar";
 const TIME_ZONE = "Asia/Manila";
 
 export function formatEventDate(iso: string) {
@@ -37,4 +38,12 @@ export function formatBirthdate(key: string) {
     timeZone: TIME_ZONE,
     dateStyle: "medium",
   }).format(new Date(`${key}T12:00:00+08:00`));
+}
+
+export function formatEventRange(startIso: string, endIso: string | null) {
+  if (!endIso) return formatEventDate(startIso);
+  if (dateKey(startIso) === dateKey(endIso)) {
+    return `${formatEventDate(startIso)} to ${formatEventTime(endIso)}`;
+  }
+  return `${formatEventDate(startIso)} to ${formatEventDate(endIso)}`;
 }

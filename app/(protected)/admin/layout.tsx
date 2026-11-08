@@ -8,6 +8,7 @@ import { AuthLoading } from "@/components/auth/auth-loading";
 import { AppShell } from "@/components/layout/app-shell";
 import { AdminSidebar } from "@/components/layout/admin-sidebar";
 import { AppHeader } from "@/components/layout/app-header";
+import { getBranding } from "@/lib/branding";
 
 const ADMIN_TITLES = {
   "/admin/dashboard": "Dashboard",
@@ -17,19 +18,20 @@ const ADMIN_TITLES = {
   "/admin/settings": "Settings",
 };
 async function AdminContent({ children }: { children: React.ReactNode }) {
-  await connection()
+  await connection();
   const currentUser = await getCurrentUser();
 
   if (!currentUser) redirect("/auth/login");
   if (currentUser.role !== "admin") unauthorized();
 
   const settings = await getBarangaySettings();
+  const branding = getBranding(settings);
 
   return (
     <AppShell
       sidebar={
         <AdminSidebar
-          barangayName={settings.barangay_name}
+          barangayName={branding.sidebarSubtitle}
           logoUrl={settings.logo_url}
         />
       }
@@ -53,7 +55,6 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-
   return (
     <Suspense fallback={<AuthLoading />}>
       <AdminContent>{children}</AdminContent>

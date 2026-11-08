@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { Loader2, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
-
+import { ParticipantQrDialog } from "@/components/participants/participant-qr-dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -40,9 +40,11 @@ import { deleteParticipant } from "@/app/(protected)/admin/participants/actions"
 
 type Props = { participants: ParticipantListItem[]; todayKey: string };
 
-const capitalize = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
+const capitalize = (value: string) =>
+  value.charAt(0).toUpperCase() + value.slice(1);
 
 export function ParticipantsTable({ participants, todayKey }: Props) {
+  const [qrFor, setQrFor] = useState<ParticipantListItem | null>(null);
   const [pending, startTransition] = useTransition();
   const [busyId, setBusyId] = useState<string | null>(null);
   const [editing, setEditing] = useState<ParticipantListItem | null>(null);
@@ -65,7 +67,10 @@ export function ParticipantsTable({ participants, todayKey }: Props) {
   return (
     <div className="space-y-3">
       {error && (
-        <p role="alert" className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        <p
+          role="alert"
+          className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"
+        >
           {error}
         </p>
       )}
@@ -92,7 +97,10 @@ export function ParticipantsTable({ participants, todayKey }: Props) {
               const busy = pending && busyId === p.id;
 
               return (
-                <TableRow key={p.id} className={busy ? "opacity-60" : undefined}>
+                <TableRow
+                  key={p.id}
+                  className={busy ? "opacity-60" : undefined}
+                >
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
@@ -107,7 +115,9 @@ export function ParticipantsTable({ participants, todayKey }: Props) {
                           {formatListName(p)}
                         </button>
                         <p className="truncate text-xs text-muted-foreground lg:hidden">
-                          {[SEX_LABELS[p.sex], p.zone].filter(Boolean).join(" · ")}
+                          {[SEX_LABELS[p.sex], p.zone]
+                            .filter(Boolean)
+                            .join(" · ")}
                         </p>
                       </div>
                     </div>
@@ -115,7 +125,9 @@ export function ParticipantsTable({ participants, todayKey }: Props) {
 
                   <TableCell>
                     <p className="text-sm font-medium">{age}</p>
-                    <p className="text-xs text-muted-foreground">{capitalize(group)}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {capitalize(group)}
+                    </p>
                   </TableCell>
 
                   <TableCell className="hidden text-sm md:table-cell">
@@ -127,7 +139,9 @@ export function ParticipantsTable({ participants, todayKey }: Props) {
                   </TableCell>
 
                   <TableCell className="hidden text-sm xl:table-cell">
-                    {p.contact_number ?? <span className="text-muted-foreground">-</span>}
+                    {p.contact_number ?? (
+                      <span className="text-muted-foreground">-</span>
+                    )}
                   </TableCell>
 
                   <TableCell>
@@ -173,6 +187,13 @@ export function ParticipantsTable({ participants, todayKey }: Props) {
         todayKey={todayKey}
       />
 
+      <ParticipantQrDialog
+        participant={qrFor}
+        onOpenChange={(open) => {
+          if (!open) setQrFor(null);
+        }}
+      />
+
       <AlertDialog
         open={toDelete !== null}
         onOpenChange={(open) => {
@@ -186,8 +207,8 @@ export function ParticipantsTable({ participants, todayKey }: Props) {
               <span className="font-medium text-foreground">
                 {toDelete ? formatFullName(toDelete) : ""}
               </span>{" "}
-              and any records linked to them, such as event registrations and attendance,
-              will be permanently deleted. This cannot be undone.
+              and any records linked to them, such as event registrations and
+              attendance, will be permanently deleted. This cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

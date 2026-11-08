@@ -4,15 +4,20 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { getBarangaySettings } from "@/lib/settings";
 import { getContrastColor } from "@/lib/color";
 import "./globals.css";
+import { getBranding } from "@/lib/branding";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
 export async function generateMetadata(): Promise<Metadata> {
-  const s = await getBarangaySettings();
+  const branding = getBranding(await getBarangaySettings());
+
   return {
-    title: { default: `Lahok · ${s.barangay_name}`, template: "%s · Lahok" },
-    description: "Open-source event management for Sangguniang Kabataan.",
+    title: { default: branding.metaTitle, template: "%s · Lahok" },
+    description: branding.metaDescription,
   };
 }
 

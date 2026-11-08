@@ -1,37 +1,61 @@
-
+import { Suspense } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 
-export default function PublicHeader() {
+import { cn } from "@/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { buttonVariants } from "@/components/ui/button";
+import { AuthButton, AuthButtonSkeleton } from "@/components/public/auth-button";
+
+type Props = {
+  name: string;
+  subtitle: string;
+  logoUrl: string | null;
+  hasAbout: boolean;
+  hasContact: boolean;
+};
+
+export function PublicHeader({ name, subtitle, logoUrl, hasAbout, hasContact }: Props) {
+  const links = [
+    { label: "Events", href: "/events" },
+    ...(hasAbout ? [{ label: "About", href: "/#about" }] : []),
+    ...(hasContact ? [{ label: "Contact", href: "/#contact" }] : []),
+  ];
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="text-xl font-bold tracking-tight">lahok.</span>
-          <span className="rounded-md border px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
-            OPEN SOURCE
-          </span>
+    <header className="sticky top-0 z-20 border-b bg-background">
+      <div className="mx-auto flex h-16 w-full max-w-6xl items-center gap-4 px-4">
+        <Link href="/" className="flex min-w-0 items-center gap-3">
+          <Avatar className="size-9 rounded-lg">
+            {logoUrl && <AvatarImage src={logoUrl} alt="" className="object-contain" />}
+            <AvatarFallback className="rounded-lg bg-primary font-semibold text-primary-foreground">
+              {name.trim().charAt(0).toUpperCase() || "L"}
+            </AvatarFallback>
+          </Avatar>
+          <div className="min-w-0 leading-tight">
+            <p className="truncate text-sm font-semibold">{name}</p>
+            <p className="truncate text-xs text-muted-foreground">{subtitle}</p>
+          </div>
         </Link>
 
-        <nav className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
-          <Link href="#features" className="transition-colors hover:text-foreground">
-            Features
-          </Link>
-          <Link href="#about" className="transition-colors hover:text-foreground">
-            About
-          </Link>
-          <Link
-            href="https://github.com"
-            target="_blank"
-            className="transition-colors hover:text-foreground"
-          >
-            GitHub
-          </Link>
-        </nav>
+        <div className="ml-auto flex items-center gap-1">
+          <nav aria-label="Main" className="hidden items-center gap-1 md:flex">
+            {links.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
 
-        <Button size="sm">
-          <Link href="/auth/login">Get Started</Link>
-        </Button>
+          <div className="md:ml-2">
+            <Suspense fallback={<AuthButtonSkeleton />}>
+              <AuthButton />
+            </Suspense>
+          </div>
+        </div>
       </div>
     </header>
   );

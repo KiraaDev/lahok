@@ -28,6 +28,7 @@ import {
 import type { BarangaySettings } from "@/types/settings";
 import { updateSettings } from "@/app/(protected)/admin/settings/actions";
 import { LogoUpload } from "./logo-upload";
+import { DEFAULT_BARANGAY_NAME } from "@/lib/branding";
 
 const PRESETS = [
   { name: "Blue", value: "#1D4ED8" },
@@ -83,7 +84,10 @@ export function SettingsForm({ settings }: { settings: BarangaySettings }) {
   } = useForm<SettingsFormValues, unknown, SettingsData>({
     resolver: zodResolver(settingsSchema),
     defaultValues: {
-      barangay_name: settings.barangay_name,
+      barangay_name:
+        settings.barangay_name === DEFAULT_BARANGAY_NAME
+          ? ""
+          : settings.barangay_name,
       municipality_city: settings.municipality_city ?? "",
       province: settings.province ?? "",
       primary_color: settings.primary_color,

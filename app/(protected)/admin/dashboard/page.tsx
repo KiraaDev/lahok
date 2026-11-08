@@ -24,6 +24,9 @@ import { StatusBadge } from "@/components/events/status-badge";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { getDashboardData } from "@/lib/dashboard";
 import { formatEventDate } from "@/lib/format";
+import { getBranding } from "@/lib/branding";
+import { getBarangaySettings } from "@/lib/settings";
+import { SetupBanner } from "@/components/admin/setup-banner";
 
 export const metadata = {
   title: "Dashboard",
@@ -58,12 +61,17 @@ function StatCard({ label, value, hint, icon: Icon, href }: StatProps) {
 
 export default async function DashboardPage() {
   const user = await requireAdmin();
-  const { counts, nextEvents } = await getDashboardData();
+  const [{ counts, nextEvents }, settings] = await Promise.all([
+    getDashboardData(),
+    getBarangaySettings(),
+  ]);
+  const branding = getBranding(settings);
 
   const firstName = user.full_name?.trim().split(/\s+/)[0] ?? null;
 
   return (
     <div className="mx-auto w-full space-y-6">
+      {!branding.isConfigured && <SetupBanner />}
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold tracking-tight">
@@ -115,7 +123,9 @@ export default async function DashboardPage() {
           <CardHeader className="flex-row items-start justify-between gap-3 space-y-0">
             <div className="space-y-1.5">
               <CardTitle className="text-base">Next events</CardTitle>
-              <CardDescription>Upcoming and ongoing, soonest first.</CardDescription>
+              <CardDescription>
+                Upcoming and ongoing, soonest first.
+              </CardDescription>
             </div>
             <Link
               href="/admin/events"
@@ -131,9 +141,13 @@ export default async function DashboardPage() {
                 <CalendarDays className="size-6 text-muted-foreground" />
                 <p className="text-sm font-medium">No upcoming events.</p>
                 <p className="max-w-xs text-sm text-muted-foreground">
-                  Create an event to start registering youth and tracking attendance.
+                  Create an event to start registering youth and tracking
+                  attendance.
                 </p>
-                <Link href="/admin/events/new" className={cn(buttonVariants({ size: "sm" }))}>
+                <Link
+                  href="/admin/events/new"
+                  className={cn(buttonVariants({ size: "sm" }))}
+                >
                   <CalendarPlus className="size-4" />
                   New event
                 </Link>
@@ -161,7 +175,9 @@ export default async function DashboardPage() {
                       </div>
 
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium">{event.title}</p>
+                        <p className="truncate text-sm font-medium">
+                          {event.title}
+                        </p>
                         <p className="truncate text-xs text-muted-foreground">
                           {formatEventDate(event.starts_at)}
                           {event.venue ? ` · ${event.venue}` : ""}
@@ -185,21 +201,30 @@ export default async function DashboardPage() {
           <CardContent className="flex flex-col gap-2">
             <Link
               href="/admin/events/new"
-              className={cn(buttonVariants({ variant: "outline" }), "justify-start")}
+              className={cn(
+                buttonVariants({ variant: "outline" }),
+                "justify-start",
+              )}
             >
               <CalendarPlus className="size-4" />
               Create an event
             </Link>
             <Link
               href="/admin/events?view=calendar"
-              className={cn(buttonVariants({ variant: "outline" }), "justify-start")}
+              className={cn(
+                buttonVariants({ variant: "outline" }),
+                "justify-start",
+              )}
             >
               <CalendarDays className="size-4" />
               Open the calendar
             </Link>
             <Link
               href="/admin/settings"
-              className={cn(buttonVariants({ variant: "outline" }), "justify-start")}
+              className={cn(
+                buttonVariants({ variant: "outline" }),
+                "justify-start",
+              )}
             >
               <Settings className="size-4" />
               Barangay settings

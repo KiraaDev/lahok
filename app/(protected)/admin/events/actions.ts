@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { z } from "zod";
 
 import { createClient } from "@/lib/supabase/server";
@@ -29,11 +29,6 @@ function bannerPath(url: string | null) {
   const marker = `/${EVENT_BANNER_BUCKET}/`;
   const i = url ? url.indexOf(marker) : -1;
   return url && i >= 0 ? url.slice(i + marker.length) : null;
-}
-
-function refresh() {
-  revalidatePath("/admin/events");
-  revalidatePath("/events");
 }
 
 export async function createEvent(values: EventData): Promise<CreateResult> {
@@ -205,4 +200,9 @@ export async function removeEventBanner(eventId: string): Promise<BannerResult> 
 
   refresh();
   return { ok: true, url: null };
+}
+
+function refresh() {
+  revalidatePath("/admin/events");
+  updateTag("public-events");
 }

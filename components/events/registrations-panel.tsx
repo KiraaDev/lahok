@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Loader2, Search, Users, X } from "lucide-react";
+import { Loader2, QrCode, Search, Users, X } from "lucide-react";
 
 import {
   AlertDialog,
@@ -32,6 +32,7 @@ import {
 } from "@/lib/participant-utils";
 import type { RegistrationItem } from "@/types/registration";
 import { removeRegistration } from "@/app/(protected)/admin/events/registration-actions";
+import Link from "next/link";
 
 type Props = {
   eventId: string;
@@ -39,9 +40,14 @@ type Props = {
   todayKey: string;
 };
 
-const capitalize = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
+const capitalize = (value: string) =>
+  value.charAt(0).toUpperCase() + value.slice(1);
 
-export function RegistrationsPanel({ eventId, registrations, todayKey }: Props) {
+export function RegistrationsPanel({
+  eventId,
+  registrations,
+  todayKey,
+}: Props) {
   const [filter, setFilter] = useState("");
   const [toRemove, setToRemove] = useState<RegistrationItem | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -52,7 +58,7 @@ export function RegistrationsPanel({ eventId, registrations, todayKey }: Props) 
     ? registrations.filter((r) =>
         `${formatFullName(r.participant)} ${r.participant.zone ?? ""}`
           .toLowerCase()
-          .includes(needle)
+          .includes(needle),
       )
     : registrations;
 
@@ -83,7 +89,10 @@ export function RegistrationsPanel({ eventId, registrations, todayKey }: Props) 
 
       <CardContent className="space-y-3">
         {error && (
-          <p role="alert" className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          <p
+            role="alert"
+            className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"
+          >
             {error}
           </p>
         )}
@@ -93,7 +102,8 @@ export function RegistrationsPanel({ eventId, registrations, todayKey }: Props) 
             <Users className="size-6 text-muted-foreground" />
             <p className="text-sm font-medium">Nobody registered.</p>
             <p className="max-w-xs text-sm text-muted-foreground">
-              Add participants so they can be checked in with their QR codes at the event.
+              Add participants so they can be checked in with their QR codes at
+              the event.
             </p>
           </div>
         ) : (
@@ -120,7 +130,10 @@ export function RegistrationsPanel({ eventId, registrations, todayKey }: Props) 
                 {visible.map((r) => {
                   const age = calculateAge(r.participant.birthdate, todayKey);
                   return (
-                    <li key={r.id} className="flex items-center gap-3 px-3 py-2.5">
+                    <li
+                      key={r.id}
+                      className="flex items-center gap-3 px-3 py-2.5"
+                    >
                       <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
                         {getInitials(r.participant)}
                       </div>
@@ -133,16 +146,31 @@ export function RegistrationsPanel({ eventId, registrations, todayKey }: Props) 
                           {r.participant.zone ? ` · ${r.participant.zone}` : ""}
                         </p>
                       </div>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        disabled={pending}
-                        aria-label={`Remove ${formatFullName(r.participant)}`}
-                        onClick={() => setToRemove(r)}
-                      >
-                        <X className="size-4" />
-                      </Button>
+
+                      <div className="flex shrink-0 items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          aria-label={`View QR for ${formatFullName(r.participant)}`}
+                        >
+                          <Link
+                            href={`/admin/events/${eventId}/participants/${r.participant.id}`}
+                          >
+                            <QrCode className="size-4" />
+                          </Link>
+                        </Button>
+
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          disabled={pending}
+                          aria-label={`Remove ${formatFullName(r.participant)}`}
+                          onClick={() => setToRemove(r)}
+                        >
+                          <X className="size-4" />
+                        </Button>
+                      </div>
                     </li>
                   );
                 })}
@@ -165,8 +193,8 @@ export function RegistrationsPanel({ eventId, registrations, todayKey }: Props) 
               <span className="font-medium text-foreground">
                 {toRemove ? formatFullName(toRemove.participant) : ""}
               </span>{" "}
-              will no longer be registered for this event. Their participant record is not
-              deleted.
+              will no longer be registered for this event. Their participant
+              record is not deleted.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

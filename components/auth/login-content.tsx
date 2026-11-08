@@ -1,4 +1,3 @@
-
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ArrowLeft, CalendarDays } from "lucide-react";
@@ -15,6 +14,8 @@ import {
 } from "@/components/ui/card";
 
 import { LoginForm } from "./login-form";
+import { getBarangaySettings } from "@/lib/settings";
+import { getBranding } from "@/lib/branding";
 
 export default async function LoginContent() {
   const currentUser = await getCurrentUser();
@@ -22,6 +23,9 @@ export default async function LoginContent() {
   if (currentUser) {
     redirect(getDashboardPath(currentUser.role));
   }
+
+  const settings = await getBarangaySettings();
+  const branding = getBranding(settings);
 
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background p-4">
@@ -48,13 +52,9 @@ export default async function LoginContent() {
             <div className="space-y-2">
               <p className="text-2xl font-bold tracking-tight">Lahok</p>
 
-              <CardTitle className="text-xl">
-                Welcome back
-              </CardTitle>
+              <CardTitle className="text-xl">Welcome back</CardTitle>
 
-              <CardDescription className="leading-relaxed">
-                Sign in to access your dashboard and manage events.
-              </CardDescription>
+              <CardDescription>{branding.loginDescription}</CardDescription>
             </div>
           </CardHeader>
 
