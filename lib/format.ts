@@ -31,3 +31,10 @@ export function formatMonthTitle(year: number, month: number) {
     year: "numeric",
   }).format(new Date(Date.UTC(year, month - 1, 1)));
 }
+
+export function formatBirthdate(key: string) {
+  return new Intl.DateTimeFormat("en-PH", {
+    timeZone: TIME_ZONE,
+    dateStyle: "medium",
+  }).format(new Date(`${key}T12:00:00+08:00`));
+}

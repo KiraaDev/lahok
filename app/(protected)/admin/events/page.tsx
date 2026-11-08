@@ -15,7 +15,12 @@ import { EventsTable } from "@/components/events/events-table";
 import { EventsCalendar } from "@/components/events/events-calendar";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { getEvents } from "@/lib/events";
-import { getTodayKey, monthRange, resolveMonth, shiftMonth } from "@/lib/calendar";
+import {
+  getTodayKey,
+  monthRange,
+  resolveMonth,
+  shiftMonth,
+} from "@/lib/calendar";
 import { formatMonthTitle } from "@/lib/format";
 import { EVENT_STATUSES, STATUS_LABELS } from "@/types/event";
 
@@ -39,7 +44,10 @@ const first = (value?: string | string[]) =>
 
 const FILTERS = [
   { label: "All", value: "" },
-  ...EVENT_STATUSES.map((s) => ({ label: STATUS_LABELS[s], value: s as string })),
+  ...EVENT_STATUSES.map((s) => ({
+    label: STATUS_LABELS[s],
+    value: s as string,
+  })),
 ];
 
 function buildHref(p: Current) {
@@ -54,21 +62,36 @@ function buildHref(p: Current) {
   return qs ? `/admin/events?${qs}` : "/admin/events";
 }
 
-export default async function EventsPage({ searchParams }: { searchParams: SearchParams }) {
+export default async function EventsPage({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
   await requireAdmin();
 
   const params = await searchParams;
   const q = first(params.q).trim();
   const rawStatus = first(params.status);
-  const status = (EVENT_STATUSES as readonly string[]).includes(rawStatus) ? rawStatus : "";
+  const status = (EVENT_STATUSES as readonly string[]).includes(rawStatus)
+    ? rawStatus
+    : "";
   const view: View = first(params.view) === "calendar" ? "calendar" : "table";
 
   const todayKey = getTodayKey();
-  const { year, month, value: monthValue } = resolveMonth(first(params.month), todayKey);
+  const {
+    year,
+    month,
+    value: monthValue,
+  } = resolveMonth(first(params.month), todayKey);
 
   const events =
     view === "calendar"
-      ? await getEvents({ q, status, ascending: true, ...monthRange(year, month) })
+      ? await getEvents({
+          q,
+          status,
+          ascending: true,
+          ...monthRange(year, month),
+        })
       : await getEvents({ q, status });
 
   const current: Current = { view, month: monthValue, status, q };
@@ -78,8 +101,8 @@ export default async function EventsPage({ searchParams }: { searchParams: Searc
     <div className="mx-auto w-full space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <p className="text-sm text-muted-foreground">
-  Manage your events and their visibility on the public page.
-</p>
+          Manage your events and their visibility on the public page.
+        </p>
         <Link href="/admin/events/new" className={cn(buttonVariants())}>
           <CalendarPlus className="size-4" />
           New event
@@ -111,12 +134,19 @@ export default async function EventsPage({ searchParams }: { searchParams: Searc
             </Button>
           </form>
 
-          <div className="inline-flex rounded-lg border p-0.5" role="group" aria-label="Change view">
+          <div
+            className="inline-flex rounded-lg border p-0.5"
+            role="group"
+            aria-label="Change view"
+          >
             <Link
               href={buildHref({ ...current, view: "table" })}
               aria-current={view === "table" ? "page" : undefined}
               className={cn(
-                buttonVariants({ variant: view === "table" ? "default" : "ghost", size: "sm" })
+                buttonVariants({
+                  variant: view === "table" ? "default" : "ghost",
+                  size: "sm",
+                }),
               )}
             >
               <List className="size-4" />
@@ -126,7 +156,10 @@ export default async function EventsPage({ searchParams }: { searchParams: Searc
               href={buildHref({ ...current, view: "calendar" })}
               aria-current={view === "calendar" ? "page" : undefined}
               className={cn(
-                buttonVariants({ variant: view === "calendar" ? "default" : "ghost", size: "sm" })
+                buttonVariants({
+                  variant: view === "calendar" ? "default" : "ghost",
+                  size: "sm",
+                }),
               )}
             >
               <CalendarDays className="size-4" />
@@ -144,7 +177,7 @@ export default async function EventsPage({ searchParams }: { searchParams: Searc
                 buttonVariants({
                   variant: status === f.value ? "default" : "outline",
                   size: "sm",
-                })
+                }),
               )}
             >
               {f.label}
@@ -156,33 +189,52 @@ export default async function EventsPage({ searchParams }: { searchParams: Searc
       {view === "calendar" ? (
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-2">
-            <h3 className="text-base font-semibold">{formatMonthTitle(year, month)}</h3>
+            <h3 className="text-base font-semibold">
+              {formatMonthTitle(year, month)}
+            </h3>
 
             <div className="flex items-center gap-2">
               <Link
                 href={buildHref({ ...current, month: todayKey.slice(0, 7) })}
-                className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "sm" }),
+                )}
               >
                 Today
               </Link>
               <Link
-                href={buildHref({ ...current, month: shiftMonth(monthValue, -1) })}
+                href={buildHref({
+                  ...current,
+                  month: shiftMonth(monthValue, -1),
+                })}
                 aria-label="Previous month"
-                className={cn(buttonVariants({ variant: "outline", size: "icon" }))}
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "icon" }),
+                )}
               >
                 <ChevronLeft className="size-4" />
               </Link>
               <Link
-                href={buildHref({ ...current, month: shiftMonth(monthValue, 1) })}
+                href={buildHref({
+                  ...current,
+                  month: shiftMonth(monthValue, 1),
+                })}
                 aria-label="Next month"
-                className={cn(buttonVariants({ variant: "outline", size: "icon" }))}
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "icon" }),
+                )}
               >
                 <ChevronRight className="size-4" />
               </Link>
             </div>
           </div>
 
-          <EventsCalendar events={events} year={year} month={month} todayKey={todayKey} />
+          <EventsCalendar
+            events={events}
+            year={year}
+            month={month}
+            todayKey={todayKey}
+          />
         </div>
       ) : events.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed p-10 text-center">
@@ -195,7 +247,10 @@ export default async function EventsPage({ searchParams }: { searchParams: Searc
               : "Create your first event to start registering youth and tracking attendance."}
           </p>
           {hasFilters ? (
-            <Link href="/admin/events" className={cn(buttonVariants({ variant: "outline" }))}>
+            <Link
+              href="/admin/events"
+              className={cn(buttonVariants({ variant: "outline" }))}
+            >
               Clear filters
             </Link>
           ) : (
@@ -206,7 +261,7 @@ export default async function EventsPage({ searchParams }: { searchParams: Searc
           )}
         </div>
       ) : (
-        <EventsTable events={events} />
+        <EventsTable events={events} todayKey={todayKey} />
       )}
     </div>
   );

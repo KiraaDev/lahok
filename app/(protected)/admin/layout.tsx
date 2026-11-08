@@ -12,9 +12,10 @@ import { AppHeader } from "@/components/layout/app-header";
 const ADMIN_TITLES = {
   "/admin/dashboard": "Dashboard",
   "/admin/events": "Events",
+  "/admin/events/new": "New event",
+  "/admin/participants": "Participants",
   "/admin/settings": "Settings",
 };
-
 async function AdminContent({ children }: { children: React.ReactNode }) {
   await connection()
   const currentUser = await getCurrentUser();
