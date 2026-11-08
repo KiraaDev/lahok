@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { CalendarDays } from "lucide-react";
 
@@ -7,7 +8,6 @@ import { buildMonthGrid, dateKey } from "@/lib/calendar";
 import { formatDayHeading, formatEventTime } from "@/lib/format";
 import type { EventListItem } from "@/lib/events";
 import type { EventStatus } from "@/types/event";
-import Image from "next/image";
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MAX_PER_DAY = 3;
@@ -39,7 +39,7 @@ function groupByDay(events: EventListItem[]) {
   return map;
 }
 
-function BannerCard({ event }: { event: EventListItem }) {
+function BannerCard({ event, url }: { event: EventListItem; url: string }) {
   return (
     <Link
       href={`/admin/events/${event.id}`}
@@ -47,11 +47,12 @@ function BannerCard({ event }: { event: EventListItem }) {
       className="group relative block h-16 overflow-hidden rounded-md bg-muted"
     >
       <Image
-        src={event.banner_url ?? ""}
+        src={url}
         alt=""
-        loading="lazy"
+        fill
+        sizes="170px"
         className={cn(
-          "absolute inset-0 size-full object-cover transition-transform group-hover:scale-105",
+          "object-cover transition-transform group-hover:scale-105",
           event.status === "cancelled" && "grayscale"
         )}
       />
@@ -137,7 +138,7 @@ export function EventsCalendar({ events, year, month, todayKey }: Props) {
 
                   {shown.map((event) =>
                     event.banner_url ? (
-                      <BannerCard key={event.id} event={event} />
+                      <BannerCard key={event.id} event={event} url={event.banner_url} />
                     ) : (
                       <Pill key={event.id} event={event} />
                     )
@@ -184,8 +185,9 @@ export function EventsCalendar({ events, year, month, todayKey }: Props) {
                         <Image
                           src={event.banner_url}
                           alt=""
-                          loading="lazy"
-                          className="size-full object-cover"
+                          fill
+                          sizes="80px"
+                          className="object-cover"
                         />
                       ) : (
                         <CalendarDays className="absolute left-1/2 top-1/2 size-5 -translate-x-1/2 -translate-y-1/2 text-muted-foreground" />
