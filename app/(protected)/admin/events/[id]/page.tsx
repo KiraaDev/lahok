@@ -7,6 +7,9 @@ import { buttonVariants } from "@/components/ui/button";
 import { EventForm } from "@/components/events/event-form";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { getEventById } from "@/lib/events";
+import { RegistrationsSkeleton } from "@/components/events/registrations-skeleton";
+import { Suspense } from "react";
+import { EventRegistrations } from "@/components/events/event-registrations";
 
 export const metadata = {
   title: "Edit event",
@@ -28,7 +31,7 @@ export default async function EditEventPage({ params, searchParams }: Props) {
   const banner = Array.isArray(query.banner) ? query.banner[0] : query.banner;
 
   return (
-    <div className="mx-auto w-full max-w-5xl space-y-6">
+    <div className="mx-auto w-full space-y-6">
       <div className="space-y-2">
         <Link
           href="/admin/events"
@@ -50,6 +53,11 @@ export default async function EditEventPage({ params, searchParams }: Props) {
       )}
 
       <EventForm event={event} />
+
+
+      <Suspense fallback={<RegistrationsSkeleton />}>
+        <EventRegistrations eventId={event.id} />
+      </Suspense>
     </div>
   );
 }

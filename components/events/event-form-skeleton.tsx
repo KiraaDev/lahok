@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function EventFormSkeleton() {
   return (
-    <div className="mx-auto w-full max-w-5xl space-y-6">
+    <div className="mx-auto w-full space-y-6">
       <div className="space-y-3">
         <Skeleton className="h-8 w-24" />
         <div className="space-y-2">

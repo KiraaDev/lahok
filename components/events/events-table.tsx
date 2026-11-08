@@ -2,9 +2,9 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Loader2, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { Loader2, Pencil, Trash2 } from "lucide-react";
 
+import { cn } from "@/lib/utils";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,12 +15,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import {
   Table,
@@ -30,14 +25,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { AddParticipantsDialog } from "@/components/events/add-participants-dialog";
 import { StatusBadge } from "@/components/events/status-badge";
 import { formatEventDate } from "@/lib/format";
 import { CATEGORY_LABELS } from "@/types/event";
 import type { EventListItem } from "@/lib/events";
 import { deleteEvent, setEventPublic } from "@/app/(protected)/admin/events/actions";
 
-export function EventsTable({ events }: { events: EventListItem[] }) {
-  const router = useRouter();
+type Props = { events: EventListItem[]; todayKey: string };
+
+export function EventsTable({ events, todayKey }: Props) {
   const [pending, startTransition] = useTransition();
   const [busyId, setBusyId] = useState<string | null>(null);
   const [toDelete, setToDelete] = useState<EventListItem | null>(null);
@@ -83,7 +80,7 @@ export function EventsTable({ events }: { events: EventListItem[] }) {
               <TableHead className="hidden lg:table-cell">Category</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-center">Public</TableHead>
-              <TableHead className="w-12">
+              <TableHead className="text-right">
                 <span className="sr-only">Actions</span>
               </TableHead>
             </TableRow>
@@ -133,31 +130,40 @@ export function EventsTable({ events }: { events: EventListItem[] }) {
                   </TableCell>
 
                   <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger
-                        aria-label={`Actions for ${event.title}`}
-                        className="flex size-8 items-center justify-center rounded-md outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
+                    <div className="flex items-center justify-end gap-1">
+                      <AddParticipantsDialog
+                        eventId={event.id}
+                        eventTitle={event.title}
+                        todayKey={todayKey}
+                        compact
+                      />
+
+                      <Link
+                        href={`/admin/events/${event.id}`}
+                        aria-label={`Edit ${event.title}`}
+                        title="Edit"
+                        className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
+                      >
+                        <Pencil className="size-4" />
+                      </Link>
+
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        disabled={pending}
+                        aria-label={`Delete ${event.title}`}
+                        title="Delete"
+                        className="text-destructive hover:text-destructive"
+                        onClick={() => setToDelete(event)}
                       >
                         {busy ? (
                           <Loader2 className="size-4 animate-spin" />
                         ) : (
-                          <MoreHorizontal className="size-4" />
-                        )}
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-40">
-                        <DropdownMenuItem onClick={() => router.push(`/admin/events/${event.id}`)}>
-                          <Pencil className="size-4" />
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="text-destructive focus:text-destructive"
-                          onClick={() => setToDelete(event)}
-                        >
                           <Trash2 className="size-4" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                        )}
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               );
