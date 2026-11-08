@@ -9,7 +9,7 @@ export default async function SettingsPage() {
   const settings = await getBarangaySettings();
 
   return (
-    <div className="mx-auto w-full max-w-5xl space-y-6">
+    <div className="mx-auto w-ful space-y-6">
       <div>
         <h2 className="text-lg font-semibold tracking-tight">
           Barangay settings

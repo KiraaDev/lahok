@@ -75,14 +75,11 @@ export default async function EventsPage({ searchParams }: { searchParams: Searc
   const hasFilters = Boolean(q || status);
 
   return (
-    <div className="mx-auto w-full max-w-6xl space-y-6">
+    <div className="mx-auto w-full space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h2 className="text-lg font-semibold tracking-tight">Events</h2>
-          <p className="text-sm text-muted-foreground">
-            Create and manage events, and choose which ones appear on the public page.
-          </p>
-        </div>
+        <p className="text-sm text-muted-foreground">
+  Manage your events and their visibility on the public page.
+</p>
         <Link href="/admin/events/new" className={cn(buttonVariants())}>
           <CalendarPlus className="size-4" />
           New event
