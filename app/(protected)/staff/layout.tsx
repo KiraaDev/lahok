@@ -1,4 +1,3 @@
-// app/(protected)/staff/layout.tsx
 import { Suspense } from "react";
 import { redirect, unauthorized } from "next/navigation";
 import { connection } from "next/server";
@@ -34,6 +33,7 @@ async function StaffContent({ children }: { children: React.ReactNode }) {
         <StaffSidebar
           barangayName={branding.sidebarSubtitle}
           logoUrl={settings.logo_url}
+          isAdmin={currentUser.role === "admin"}
         />
       }
       header={

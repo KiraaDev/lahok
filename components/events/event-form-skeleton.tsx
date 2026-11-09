@@ -1,4 +1,3 @@
-// components/events/event-form-skeleton.tsx
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function EventFormSkeleton() {

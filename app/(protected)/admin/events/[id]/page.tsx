@@ -6,8 +6,8 @@ import { notFound } from "next/navigation";
 import {
   ArrowLeft,
   Calendar,
-  CheckCircle2,
   MapPin,
+  Pencil,
   ScanLine,
 } from "lucide-react";
 
@@ -15,11 +15,10 @@ import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { formatEventTime } from "@/lib/format";
-import { formatListName } from "@/lib/participant-utils";
-import {
-  EventRegistrations,
-} from "@/components/events/event-registrations";
+import { EventRegistrations } from "@/components/events/event-registrations";
 import { RegistrationsSkeleton } from "@/components/events/registrations-skeleton";
+import { AttendanceSkeleton } from "@/components/events/attendance-skeleton";
+import { EventAttendance } from "@/components/events/event-attendance";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -30,7 +29,7 @@ export default async function EventDetailPage({ params }: Props) {
   const { id } = await params;
   const supabase = await createClient();
 
-  const [{ data: event, error: eventError }, { data: attendance }] =
+  const [{ data: event, error: eventError }] =
     await Promise.all([
       supabase.from("events").select("*").eq("id", id).single(),
       supabase
@@ -48,7 +47,7 @@ export default async function EventDetailPage({ params }: Props) {
               zone
             )
           )
-        `
+        `,
         )
         .eq("event_id", id)
         .order("checked_in_at", { ascending: false }),
@@ -58,26 +57,36 @@ export default async function EventDetailPage({ params }: Props) {
     notFound();
   }
 
-  const attendees = attendance ?? [];
-
   return (
     <main className="mx-auto space-y-8 p-4 py-8">
       <div className="flex items-center justify-between gap-3">
         <Link
           href="/admin/events"
-          className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "-ml-2")}
+          className={cn(
+            buttonVariants({ variant: "ghost", size: "sm" }),
+            "-ml-2",
+          )}
         >
           <ArrowLeft className="mr-2 size-4" />
           Back to events
         </Link>
 
-        <Link
-          href={`/staff/check-in?eventId=${event.id}`}
-          className={cn(buttonVariants({ size: "sm" }))}
-        >
-          <ScanLine className="mr-2 size-4" />
-          Open Scanner
-        </Link>
+        <div>
+          <Link
+            href={`/staff/check-in?eventId=${event.id}`}
+            className={cn(buttonVariants({ size: "sm" }))}
+          >
+            <ScanLine className="mr-2 size-4" />
+            Open Scanner
+          </Link>
+          <Link
+            href={`/admin/events/${event.id}/edit`}
+            className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+          >
+            <Pencil className="mr-2 size-4" />
+            Edit Event
+          </Link>
+        </div>
       </div>
 
       {/* Hero Banner Section */}
@@ -131,62 +140,16 @@ export default async function EventDetailPage({ params }: Props) {
         </div>
       </section>
 
+      <Suspense fallback={<AttendanceSkeleton />}>
+        <EventAttendance eventId={event.id} eventStatus={event.status} />
+      </Suspense>
+
       {/* Registrations */}
       <Suspense fallback={<RegistrationsSkeleton />}>
         <EventRegistrations eventId={event.id} />
       </Suspense>
 
-      {/* Attendance List */}
-      <section className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Attendance</h2>
-          <span className="text-sm text-muted-foreground">
-            {attendees.length} checked in
-          </span>
-        </div>
 
-        {attendees.length === 0 ? (
-          <p className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">
-            No participants have checked in yet.
-          </p>
-        ) : (
-          <ul className="divide-y rounded-lg border">
-            {attendees.map((entry) => {
-              const reg = Array.isArray(entry.registration)
-                ? entry.registration[0]
-                : entry.registration;
-              const person = Array.isArray(reg?.participant)
-                ? reg.participant[0]
-                : reg?.participant;
-
-              if (!person) return null;
-
-              return (
-                <li
-                  key={entry.id}
-                  className="flex items-center justify-between gap-3 px-4 py-3"
-                >
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">
-                      {formatListName(person)}
-                    </p>
-                    {person.zone && (
-                      <p className="truncate text-xs text-muted-foreground">
-                        {person.zone}
-                      </p>
-                    )}
-                  </div>
-
-                  <span className="flex shrink-0 items-center gap-1.5 text-xs font-medium text-green-700 dark:text-green-400">
-                    <CheckCircle2 className="size-4" />
-                    {formatEventTime(entry.checked_in_at)}
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </section>
     </main>
   );
 }
