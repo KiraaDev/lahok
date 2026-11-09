@@ -16,6 +16,7 @@ import {
 import { LoginForm } from "./login-form";
 import { getBarangaySettings } from "@/lib/settings";
 import { getBranding } from "@/lib/branding";
+import Image from "next/image";
 
 export default async function LoginContent() {
   const currentUser = await getCurrentUser();
@@ -44,11 +45,17 @@ export default async function LoginContent() {
 
         <Card className="border-border/70 shadow-lg shadow-black/5">
           <CardHeader className="space-y-5 text-center">
-            {/* Branding */}
-            <div className="mx-auto flex size-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-              <CalendarDays className="size-6" />
+            <div className="mx-auto flex size-12 items-center justify-center">
+              <Image
+                src="/icon.svg"
+                alt="Lahok logo"
+                width={48}
+                height={48}
+                priority
+                fetchPriority="high"
+                className="size-12 object-contain"
+              />
             </div>
-
             <div className="space-y-2">
               <p className="text-2xl font-bold tracking-tight">Lahok</p>
 
