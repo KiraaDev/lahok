@@ -70,6 +70,7 @@ export default async function PublicEventPage({ params }: Props) {
             priority
             sizes="(min-width: 1152px) 1152px, 100vw"
             className="object-cover"
+            loading="eager"
           />
         ) : (
           <div className="flex size-full items-center justify-center bg-primary/10">

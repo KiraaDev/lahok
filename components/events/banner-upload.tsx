@@ -48,6 +48,7 @@ export function BannerUpload({ url, pending, error, onPick, onRemove }: Props) {
             sizes="(min-width: 1024px) 320px, 100vw"
             unoptimized={url.startsWith("blob:")}
             className="object-cover"
+            loading="eager"
           />
         ) : (
           <div className="flex size-full flex-col items-center justify-center gap-1 text-muted-foreground">

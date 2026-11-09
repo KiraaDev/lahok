@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { Loader2, Pencil, Trash2 } from "lucide-react";
+import { Loader2, Pencil, SlidersHorizontal, Trash2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import {
@@ -30,7 +30,10 @@ import { StatusBadge } from "@/components/events/status-badge";
 import { formatEventDate } from "@/lib/format";
 import { CATEGORY_LABELS } from "@/types/event";
 import type { EventListItem } from "@/lib/events";
-import { deleteEvent, setEventPublic } from "@/app/(protected)/admin/events/actions";
+import {
+  deleteEvent,
+  setEventPublic,
+} from "@/app/(protected)/admin/events/actions";
 
 type Props = { events: EventListItem[]; todayKey: string };
 
@@ -66,7 +69,10 @@ export function EventsTable({ events, todayKey }: Props) {
   return (
     <div className="space-y-3">
       {error && (
-        <p role="alert" className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        <p
+          role="alert"
+          className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"
+        >
           {error}
         </p>
       )}
@@ -90,7 +96,10 @@ export function EventsTable({ events, todayKey }: Props) {
             {events.map((event) => {
               const busy = pending && busyId === event.id;
               return (
-                <TableRow key={event.id} className={busy ? "opacity-60" : undefined}>
+                <TableRow
+                  key={event.id}
+                  className={busy ? "opacity-60" : undefined}
+                >
                   <TableCell className="max-w-64">
                     <Link
                       href={`/admin/events/${event.id}`}
@@ -140,9 +149,21 @@ export function EventsTable({ events, todayKey }: Props) {
 
                       <Link
                         href={`/admin/events/${event.id}`}
+                        aria-label={`Manage ${event.title}`}
+                        title="Manage"
+                        className={cn(
+                          buttonVariants({ variant: "outline", size: "icon" }),
+                        )}
+                      >
+                        <SlidersHorizontal className="size-4" />
+                      </Link>
+                      <Link
+                        href={`/admin/events/${event.id}/edit`}
                         aria-label={`Edit ${event.title}`}
                         title="Edit"
-                        className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
+                        className={cn(
+                          buttonVariants({ variant: "ghost", size: "icon" }),
+                        )}
                       >
                         <Pencil className="size-4" />
                       </Link>
@@ -182,9 +203,11 @@ export function EventsTable({ events, todayKey }: Props) {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete this event?</AlertDialogTitle>
             <AlertDialogDescription>
-              <span className="font-medium text-foreground">{toDelete?.title}</span>{" "}
-              and everything linked to it, such as registrations and attendance, will be
-              permanently deleted. This cannot be undone.
+              <span className="font-medium text-foreground">
+                {toDelete?.title}
+              </span>{" "}
+              and everything linked to it, such as registrations and attendance,
+              will be permanently deleted. This cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

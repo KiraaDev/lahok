@@ -1,16 +1,19 @@
+import Link from "next/link";
+import { connection } from "next/server";
 import { notFound } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { formatFullName } from "@/lib/participant-utils";
-import { ParticipantQrCard } from "@/components/participants/participant-qr-card";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ParticipantQrCard } from "@/components/participants/participant-qr-card";
+import { encodeQrValue } from "@/lib/qr";
 
 type Props = {
   params: Promise<{ id: string; participantId: string }>;
 };
 
 export default async function ParticipantDetailPage({ params }: Props) {
+  await connection();
   const { id, participantId } = await params;
   const supabase = await createClient();
 
@@ -23,7 +26,7 @@ export default async function ParticipantDetailPage({ params }: Props) {
     supabase.from("events").select("title").eq("id", id).single(),
   ]);
 
-  if (error || !participant) {
+  if (error || !participant || !participant.qr_token) {
     notFound();
   }
 
@@ -35,8 +38,9 @@ export default async function ParticipantDetailPage({ params }: Props) {
           Back to event
         </Link>
       </Button>
+
       <ParticipantQrCard
-        qrValue={participant.qr_token}
+        qrValue={encodeQrValue(participant.qr_token)}
         fullName={formatFullName(participant)}
         zone={participant.zone}
         eventName={event?.title}

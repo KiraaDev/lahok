@@ -27,6 +27,7 @@ import { formatEventDate } from "@/lib/format";
 import { getBranding } from "@/lib/branding";
 import { getBarangaySettings } from "@/lib/settings";
 import { SetupBanner } from "@/components/admin/setup-banner";
+import { connection } from "next/server";
 
 export const metadata = {
   title: "Dashboard",
@@ -60,6 +61,7 @@ function StatCard({ label, value, hint, icon: Icon, href }: StatProps) {
 }
 
 export default async function DashboardPage() {
+    await connection();
   const user = await requireAdmin();
   const [{ counts, nextEvents }, settings] = await Promise.all([
     getDashboardData(),
@@ -167,6 +169,7 @@ export default async function DashboardPage() {
                             alt=""
                             fill
                             sizes="64px"
+                            loading="eager"
                             className="object-cover"
                           />
                         ) : (

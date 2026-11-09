@@ -16,6 +16,7 @@ const ADMIN_TITLES = {
   "/admin/events/new": "New event",
   "/admin/participants": "Participants",
   "/admin/settings": "Settings",
+  "/admin/events/[id]/edit": "Edit event",
 };
 async function AdminContent({ children }: { children: React.ReactNode }) {
   await connection();

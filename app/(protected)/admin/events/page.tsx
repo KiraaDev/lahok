@@ -23,6 +23,7 @@ import {
 } from "@/lib/calendar";
 import { formatMonthTitle } from "@/lib/format";
 import { EVENT_STATUSES, STATUS_LABELS } from "@/types/event";
+import { connection } from "next/server";
 
 export const metadata = {
   title: "Events",
@@ -67,6 +68,7 @@ export default async function EventsPage({
 }: {
   searchParams: SearchParams;
 }) {
+  await connection();
   await requireAdmin();
 
   const params = await searchParams;

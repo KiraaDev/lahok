@@ -20,6 +20,7 @@ export function PublicEventCard({ event }: { event: PublicEvent }) {
             fill
             sizes="(min-width: 1024px) 384px, (min-width: 640px) 50vw, 100vw"
             className="object-cover transition-transform duration-300 group-hover:scale-105"
+            loading="eager"
           />
         ) : (
           <div className="flex size-full items-center justify-center bg-primary/10">

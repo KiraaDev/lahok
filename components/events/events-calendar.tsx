@@ -55,6 +55,7 @@ function BannerCard({ event, url }: { event: EventListItem; url: string }) {
           "object-cover transition-transform group-hover:scale-105",
           event.status === "cancelled" && "grayscale"
         )}
+        loading="eager"
       />
       <span className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
       <span
@@ -188,6 +189,7 @@ export function EventsCalendar({ events, year, month, todayKey }: Props) {
                           fill
                           sizes="80px"
                           className="object-cover"
+                          loading="eager"
                         />
                       ) : (
                         <CalendarDays className="absolute left-1/2 top-1/2 size-5 -translate-x-1/2 -translate-y-1/2 text-muted-foreground" />
